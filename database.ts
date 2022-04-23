@@ -1,8 +1,9 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import config from "./config";
 
 export namespace DB {
     export type User = {
+        _id?: string,
         discordId: string,
         discordAccessToken: string,
         discordRefreshToken: string,
@@ -17,6 +18,7 @@ export namespace DB {
     }
 
     export type TodoItem = {
+        _id?: string,
         title: string,
         description?: string,
         done: boolean,
@@ -24,6 +26,7 @@ export namespace DB {
     }
 
     export type StudyTimer = {
+        _id?: string,
         studyTime: number,
         breakTime: number,
     }
@@ -120,13 +123,13 @@ export function addTodoItem(discordId: string, todoItem: DB.TodoItem) {
     });
 }
 
-export function removeTodoItem(discordId: string, todoItemId: ObjectId) {
+export function removeTodoItem(discordId: string, todoItemId: string) {
     return UserModel.updateOne({ discordId: discordId }, {
         $pull: { todoList: { _id: todoItemId } }
     });
 }
 
-export function updateTodoItem(discordId: string, todoItemId: ObjectId, todoItem: DB.TodoItem) {
+export function updateTodoItem(discordId: string, todoItemId: string, todoItem: DB.TodoItem) {
     return UserModel.updateOne({ discordId: discordId, "todoList._id": todoItemId }, {
         $set: { "todoList.$": todoItem }
     });
@@ -167,5 +170,24 @@ export function getDigregTokens(discordId: string) {
             digregRefreshToken: user?.digregRefreshToken,
             digregTokenExpires: user?.digregTokenExpires
         };
+    });
+}
+
+export function deleteAllTodoItems(discordId: string) {
+    return UserModel.updateOne({ discordId: discordId }, {
+        $set: { todoList: [] }
+    });
+}
+
+export function getTodoItem(discordId: string, todoItemId: string) {
+    return UserModel.findOne({ discordId: discordId }).select("todoList").then(todo => {
+        if (!todo)
+            return null;
+
+        const todoItem = todo.todoList.find(item => item._id?.toString() === todoItemId);
+        if (!todoItem)
+            return null;
+
+        return todoItem;
     });
 }
