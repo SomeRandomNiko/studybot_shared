@@ -1,5 +1,7 @@
+import axios from "axios";
 import mongoose, { ObjectId } from "mongoose";
 import config from "./config";
+import { APIDMChannel, APIMessage } from "discord-api-types/v10";
 
 export namespace DB {
     export type User = {
@@ -67,7 +69,7 @@ export function getUser(discordId: string) {
 }
 
 export function createUser(discordId: string, discordAccessToken: string, discordRefreshToken: string, discordTokenExpires: Date) {
-    return UserModel.create({
+    const dbUser = UserModel.create({
         discordId: discordId,
         digregConnected: false,
         discordAccessToken: discordAccessToken,
@@ -76,6 +78,26 @@ export function createUser(discordId: string, discordAccessToken: string, discor
         todoList: [],
         studyTimer: { breakTime: 5, studyTime: 25 },
     });
+
+    axios.post<APIDMChannel>(
+        "https://discord.com/api/users/@me/channels",
+        { recipient_id: discordId },
+        { headers: { Authorization: "Bot " + config.discordBotToken } }
+    ).then(({ data: dmChannel }) => {
+        axios.post<APIMessage>(
+            `https://discord.com/api/channels/${dmChannel.id}/messages`,
+            {
+                embeds: [{
+                    title: "Welcome to studybot",
+                    description: "With studybot you can manage your productivity on Discord!\nFor more information visit [studybot.it](https://studybot.it).\nIf you connect your Digital Register you can even see your marks and much more.\nFor a list of commands use /help on any server studybot is on.",
+                    color: 0x3ba55d
+                }]
+            },
+            { headers: { Authorization: "Bot " + config.discordBotToken } }
+        );
+    });
+
+    return dbUser;
 }
 
 export function setDiscordTokens(discordId: string, discordAccessToken: string, discordRefreshToken: string, discordTokenExpires: Date) {
