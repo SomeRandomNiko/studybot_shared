@@ -19,7 +19,7 @@ export function getDiscordOAuthTokens(code: string) {
 }
 
 export async function refreshDiscordTokens(user: DB.User) {
-    const response = await axiosInstance.post<RESTPostOAuth2AccessTokenResult>("/token", new URLSearchParams({
+    const response = await axiosInstance.post<RESTPostOAuth2AccessTokenResult>("/oauth2/token", new URLSearchParams({
         client_id: config.discordClientId,
         client_secret: config.discordClientSecret,
         refresh_token: user.discordRefreshToken,
