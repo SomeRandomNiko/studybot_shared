@@ -93,9 +93,27 @@ export function createUser(discordId: string, discordAccessToken: string, discor
             {
                 embeds: [{
                     title: "Welcome to studybot",
-                    description: "With studybot you can manage your productivity on Discord!\nFor more information visit [studybot.it](https://studybot.it).\nIf you connect your Digital Register you can even see your marks and much more.\nFor a list of commands use /help on any server studybot is on.",
+                    description: "With studybot you can manage your productivity on Discord!\nFor more information visit [studybot.it](https://studybot.it).\nIf you connect your Digital Register you can even see your marks and much more.",
                     color: 0x3ba55d
-                }]
+                }],
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                style: 5,
+                                label: `Join the Server`,
+                                url: `https://discord.gg/63xeAnNpq3`,
+                                disabled: false,
+                                emoji: {
+                                    id: null,
+                                    name: `🧠`
+                                },
+                                type: 2
+                            }
+                        ]
+                    }
+                ]
             },
             { headers: { Authorization: "Bot " + config.discordBotToken } }
         );
