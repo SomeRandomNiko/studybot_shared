@@ -42,6 +42,16 @@ export function getDigregGrades(access_token: string) {
     })
 }
 
+export function getDigregUpcomingLessons(access_token: string) {
+    return new Promise<DigregApi.Calendar>((resolve, reject) => {
+        axiosInstance.get("/lesson/my_lessons", {
+            headers: {
+                "API-TOKEN": access_token,
+            },
+        }).then(response => resolve(response.data)).catch(reject);
+    })
+}
+
 export namespace DigregApi {
 
     export type Token = {
