@@ -28,11 +28,11 @@ export async function refreshDiscordTokens(user: DB.User) {
     return response.data;
 }
 
-export function getDiscordUserData(access_token: string) {
+export function getDiscordUserData() {
     return new Promise<APIUser>((resolve, reject) => {
         axiosInstance.get<RESTGetAPIUserResult>("/users/@me", {
             headers: {
-                Authorization: `Bearer ${access_token}`,
+                Authorization: `Bot ${config.discordBotToken}`,
             },
         }).then(response => resolve(response.data)).catch(reject);
     })
