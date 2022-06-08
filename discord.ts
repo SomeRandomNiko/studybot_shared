@@ -17,9 +17,9 @@ export function getDiscordOAuthTokens(code: string) {
     })
 }
 
-export function getDiscordUserData() {
+export function getDiscordUserData(discordId: string) {
     return new Promise<APIUser>((resolve, reject) => {
-        axiosInstance.get<RESTGetAPIUserResult>("/users/@me", {
+        axiosInstance.get<RESTGetAPIUserResult>(`/users/${discordId}`, {
             headers: {
                 Authorization: `Bot ${config.discordBotToken}`,
             },
