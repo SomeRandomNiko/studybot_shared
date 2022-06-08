@@ -8,9 +8,6 @@ export namespace DB {
     export type User = {
         _id?: string,
         discordId: string,
-        discordAccessToken: string,
-        discordRefreshToken: string,
-        discordTokenExpires: Date,
         digregConnected: boolean,
         digregId?: number,
         digregAccessToken?: string,
@@ -50,9 +47,6 @@ const TodoListSchema = new mongoose.Schema<DB.TodoItem>({
 
 const UserSchema = new mongoose.Schema<DB.User>({
     discordId: { type: String, required: true, unique: true },
-    discordAccessToken: { type: String, required: true },
-    discordRefreshToken: { type: String, required: true },
-    discordTokenExpires: { type: Date, required: true },
     digregConnected: { type: Boolean, required: true },
     digregId: { type: Number, required: false },
     digregAccessToken: { type: String, required: false },
@@ -72,13 +66,10 @@ export function getUser(discordId: string) {
     return UserModel.findOne({ discordId: discordId });
 }
 
-export function createUser(discordId: string, discordAccessToken: string, discordRefreshToken: string, discordTokenExpires: Date) {
+export function createUser(discordId: string) {
     const dbUser = UserModel.create({
         discordId: discordId,
         digregConnected: false,
-        discordAccessToken: discordAccessToken,
-        discordRefreshToken: discordRefreshToken,
-        discordTokenExpires: discordTokenExpires,
         todoList: [],
         studyTimer: { breakTime: 5, studyTime: 25 },
     });
@@ -120,14 +111,6 @@ export function createUser(discordId: string, discordAccessToken: string, discor
     });
 
     return dbUser;
-}
-
-export function setDiscordTokens(discordId: string, discordAccessToken: string, discordRefreshToken: string, discordTokenExpires: Date) {
-    return UserModel.updateOne({ discordId: discordId }, {
-        discordAccessToken: discordAccessToken,
-        discordRefreshToken: discordRefreshToken,
-        discordTokenExpires: discordTokenExpires
-    });
 }
 
 export function setDigregTokens(discordId: string, digregAccessToken: string, digregTokenExpires: Date, digregId?: number, digregRefreshToken?: string) {
@@ -191,16 +174,6 @@ export function getStudyTimer(discordId: string) {
 export function getTodoList(discordId: string) {
     return UserModel.findOne({ discordId: discordId }).then(user => {
         return user?.todoList;
-    });
-}
-
-export function getDiscordTokens(discordId: string) {
-    return UserModel.findOne({ discordId: discordId }).then(user => {
-        return {
-            discordAccessToken: user?.discordAccessToken,
-            discordRefreshToken: user?.discordRefreshToken,
-            discordTokenExpires: user?.discordTokenExpires
-        };
     });
 }
 
