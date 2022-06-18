@@ -11,7 +11,7 @@ export function getDiscordOAuthTokens(code: string) {
             client_id: config.discordClientId,
             client_secret: config.discordClientSecret,
             code,
-            grant_tdype: "authorization_code",
+            grant_type: "authorization_code",
             redirect_uri: config.discordRedirectUri,
         })).then(response => resolve(response.data)).catch(reject);
     })
