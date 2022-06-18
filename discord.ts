@@ -26,3 +26,13 @@ export function getDiscordUserData(discordId: string) {
         }).then(response => resolve(response.data)).catch(reject);
     })
 }
+
+export function getDiscordUserDataByToken(access_token: string) {
+    return new Promise<APIUser>((resolve, reject) => {
+        axiosInstance.get<RESTGetAPIUserResult>(`/users/@me`, {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        }).then(response => resolve(response.data)).catch(reject);
+    })
+}
